@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import os.path
 import torch 
 import torchvision.transforms as transforms
@@ -69,6 +70,15 @@ def fitRF(func_idx):
     a, b = popt[0], popt[1]
 
     return a, b, I, B
+=======
+import os
+import torch 
+import torchvision.transforms as transforms
+import numpy as np
+from data_processing.base_dataset import BaseDataset
+import fnmatch
+import cv2
+>>>>>>> 34776ca (update code)
 
 class NRGGBRecurrentDataset(BaseDataset):
     """A template dataset class for you to implement custom datasets."""
@@ -91,6 +101,7 @@ class NRGGBRecurrentDataset(BaseDataset):
         """
         Creates an iterator over dataset.
         :param root: path to dataset root
+<<<<<<< HEAD
         :param height: height of dataset image
         :param width: width of dataset image
         :param nr_events_window: number of events in a sliding window histogram, -1 corresponds to all events
@@ -122,20 +133,40 @@ class NRGGBRecurrentDataset(BaseDataset):
                 print(dir_name, len(files))
                 self.data.append(files)
             self.dataset_size = len(self.data)
+=======
+        """
+        self.dirs = [os.path.join(os.path.join(opt.dataroot), a) for a in os.listdir(os.path.join(opt.dataroot))]
+        self.test_on_txt = opt.test_on_txt
+        self.data = []
+        for i, dir_name in enumerate(self.dirs):
+            files = sorted([os.path.join(dir_name, a) for a in os.listdir(dir_name)])
+            print(dir_name, len(files))
+            self.data.append(files)
+        self.dataset_size = len(self.data)
+>>>>>>> 34776ca (update code)
         print(self.dataset_size)
 
         self.num_bins = opt.num_bins
         self.normalization = opt.event_norm
+<<<<<<< HEAD
         self.augmentation = opt.augmentation
+=======
+>>>>>>> 34776ca (update code)
 
     def __len__(self):        
         return self.dataset_size
     
+<<<<<<< HEAD
     def process(self, gt_path, ldr_path, ev_path, t, a, b, augmentation = False, sig_s = 'RAN', sig_c = 'RAN'):
         if gt_path.endswith('.hdr'):
             hdr = cv2.imread(gt_path, cv2.IMREAD_ANYDEPTH)
         elif gt_path.endswith('.exr'):
             hdr = readEXR(gt_path)
+=======
+    def process(self, gt_path, ldr_path, ev_path, sig_s = 'RAN', sig_c = 'RAN'):
+        if gt_path.endswith('.hdr'):
+            hdr = cv2.imread(gt_path, cv2.IMREAD_ANYDEPTH)
+>>>>>>> 34776ca (update code)
         else :
             hdr = cv2.imread(gt_path) / 255
 
@@ -151,6 +182,7 @@ class NRGGBRecurrentDataset(BaseDataset):
             else :
                 ev_rep = self.__events_to_voxel_grid_pytorch(events, self.num_bins, width, height, self.normalization)
         
+<<<<<<< HEAD
         hdr = np.transpose(hdr, (2, 0, 1))
         if self.istrain:
             hdr = np.clip(hdr / np.mean(hdr) * 0.1, 0, 1)
@@ -161,6 +193,11 @@ class NRGGBRecurrentDataset(BaseDataset):
         hdr_tensor = torch.from_numpy(hdr)
         ldr_tensor = torch.from_numpy(ldr)
 
+=======
+        ldr = cv2.imread(ldr_path).transpose(2, 0, 1) / 255
+        ldr_tensor = torch.from_numpy(ldr)        
+        hdr_tensor = torch.from_numpy(hdr.transpose(2, 0, 1))
+>>>>>>> 34776ca (update code)
         return ev_rep, hdr_tensor, ldr_tensor, sig_s, sig_c
 
     def __getitem__(self, index):
@@ -180,6 +217,7 @@ class NRGGBRecurrentDataset(BaseDataset):
         sig_s = 'RAN'
         sig_c = 'RAN'
 
+<<<<<<< HEAD
         if self.istrain:
             idx = self.idx[index % self.dataset_size]
         else :
@@ -215,23 +253,48 @@ class NRGGBRecurrentDataset(BaseDataset):
         RF_idx = np.random.randint(1, 100)
         a, b, I, B = fitRF(RF_idx)
         
+=======
+        files = self.data[index % self.dataset_size]
+        idx = 0
+        if not self.test_on_txt:
+            self.ldr_paths = sorted(fnmatch.filter(files, '*_ldr_*.jpg'))
+            self.gt_paths = sorted(fnmatch.filter(files, '*_gt.jpg' ) + fnmatch.filter(files, '*_gt.png') + fnmatch.filter(files, '*_gt.hdr'))
+            self.ev_paths = sorted(fnmatch.filter(files, '*.npy'))
+        else :
+            self.gt_paths =  sorted(fnmatch.filter(files, '*.jpg' ) + fnmatch.filter(files, '*.png'), key = lambda x: int(x.split('/')[-1].split('_')[-1].split('-')[-1][:-4]))
+            self.ldr_paths = self.gt_paths
+            self.ev_paths = sorted(fnmatch.filter(files, '*.txt'), key = lambda x: int(x.split('/')[-1].split('_')[-1][:-4]))
+        self.num_img = len(self.gt_paths)
+        print(len(self.gt_paths), len(self.ev_paths), files[0])
+
+>>>>>>> 34776ca (update code)
         evs = []
         ldr = []
         gt_test = []
         ts = []
         for i in range(self.num_img):
+<<<<<<< HEAD
             evs_, gt, ldr_, sig_s, sig_c = self.process(self.gt_paths[idx + i], self.ldr_paths[idx + i] if not self.istrain else None, self.ev_paths[idx + i], a, b, self.augmentation, sig_s, sig_c)
+=======
+            evs_, gt, ldr_, sig_s, sig_c = self.process(self.gt_paths[idx + i], self.ldr_paths[idx + i], self.ev_paths[idx + i], sig_s, sig_c)
+>>>>>>> 34776ca (update code)
             evs.append(evs_)
             ldr.append(ldr_)
             gt_test.append(gt)
             fhdr = np.power(ldr[-1], 2.2)
             t = 0.1 / np.average(fhdr)
             ts.append(t)
+<<<<<<< HEAD
 
         name = self.gt_paths[idx]
         name = (name.split('/')[-3] + name.split('/')[-2] + '_' + name.split('/')[-1]).replace('_gt', '')
         gt = gt_test
 
+=======
+        name = self.gt_paths[idx]
+        name = (name.split('/')[-3] + name.split('/')[-2] + '_' + name.split('/')[-1]).replace('_gt', '')
+        gt = gt_test
+>>>>>>> 34776ca (update code)
         return {
             "ev": evs,
             "ldr": ldr,
@@ -299,5 +362,9 @@ class NRGGBRecurrentDataset(BaseDataset):
             
             voxel_grid = voxel_grid.view(num_bins, height, width)
 
+<<<<<<< HEAD
         return voxel_grid    
     
+=======
+        return voxel_grid    
+>>>>>>> 34776ca (update code)

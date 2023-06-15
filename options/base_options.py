@@ -19,6 +19,7 @@ class BaseOptions():
     def initialize(self, parser):
         """Define the common options that are used in both training and test."""
         # basic parameters
+<<<<<<< HEAD
         parser.add_argument('--dataroot', required=True, help='path to images (should have subfolders trainA, trainB, valA, valB, etc)')
         parser.add_argument('--name', type=str, default='experiment_name', help='name of the experiment. It decides where to store samples and models')
         parser.add_argument('--gpu_ids', type=str, default='0', help='gpu ids: e.g. 0  0,1,2, 0,2. use -1 for CPU')
@@ -31,10 +32,22 @@ class BaseOptions():
         parser.add_argument('--init_gain', type=float, default=0.02, help='scaling factor for normal, xavier and orthogonal.')
         parser.add_argument('--loss_type', type=str, default='l2+vgg+color', help='use all losses or just L1 loss. [all | L1]')
         parser.add_argument('--num_img', type=int, default=6, help='# number of images in recurrent training')
+=======
+        parser.add_argument('--dataroot', default='datasets/synthetic', help='path to images (should have subfolders trainA, trainB, valA, valB, etc)')
+        parser.add_argument('--name', type=str, default='test', help='name of the experiment. It decides where to store samples and models')
+        parser.add_argument('--gpu_ids', type=str, default='0', help='gpu ids: e.g. 0  0,1,2, 0,2. use -1 for CPU')
+        
+        # model parameters
+        parser.add_argument('--model', type=str, default='SEL2HDR_UnetRecurrent', help='chooses which model to use.') 
+        parser.add_argument('--num_bins', type=int, default=5, help='# of events to stack.')      
+        parser.add_argument('--num_img', type=int, default=6, help='# number of images in recurrent training')
+        parser.add_argument('--merge_type', type=str, default='mask', help='which merge layer to use [mask | weight].')
+>>>>>>> 34776ca (update code)
 
         # dataset parameters
         parser.add_argument('--event_norm', action='store_true')
         parser.add_argument('--num_threads', default=8, type=int, help='# threads for loading data.')
+<<<<<<< HEAD
         parser.add_argument('--num_bins', type=int, default=5, help='# of events to stack.')
         parser.add_argument('--dataset_mode', type=str, default='NRGGBRecurrent', help='chooses how datasets are loaded.')
         parser.add_argument('--serial_batches', action='store_true', help='if true, takes images in order to make batches, otherwise takes them randomly')
@@ -43,6 +56,11 @@ class BaseOptions():
         parser.add_argument('--augmentation', action='store_true', help='if true, add noise to input data.')
 
         parser.add_argument('--load_weights', type=str, default='Unet3R', help='which weights to load [Unet3R: for image reconstruction; Unet4R: for video reconstruction]')
+=======
+        parser.add_argument('--dataset_mode', type=str, default='NRGGBRecurrent', help='chooses which datasets are loaded. ')
+        parser.add_argument('--batch_size', type=int, default=1, help='input batch size.')
+
+>>>>>>> 34776ca (update code)
         parser.add_argument('--max_dataset_size', type=int, default=float("inf"), help='Maximum number of samples allowed per dataset. If the dataset directory contains more than max_dataset_size, only a subset is loaded.')
        
         # additional parameters
@@ -82,7 +100,10 @@ class BaseOptions():
         """Print and save options
 
         It will print both current options and default values(if different).
+<<<<<<< HEAD
         It will save options into a text file / [checkpoints_dir] / opt.txt
+=======
+>>>>>>> 34776ca (update code)
         """
         message = ''
         message += '----------------- Options ---------------\n'
@@ -95,6 +116,7 @@ class BaseOptions():
         message += '----------------- End -------------------'
         print(message)
 
+<<<<<<< HEAD
         # save to the disk
         expr_dir = os.path.join(opt.checkpoints_dir, opt.name)
         util.mkdirs(expr_dir)
@@ -103,6 +125,8 @@ class BaseOptions():
             opt_file.write(message)
             opt_file.write('\n')
 
+=======
+>>>>>>> 34776ca (update code)
     def parse(self):
         """Parse our options, create checkpoints directory suffix, and set up gpu device."""
         opt = self.gather_options()

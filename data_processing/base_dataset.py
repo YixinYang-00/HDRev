@@ -281,4 +281,8 @@ def __print_size_warning(ow, oh, w, h):
               "The loaded image size was (%d, %d), so it was adjusted to "
               "(%d, %d). This adjustment will be done to all images "
               "whose sizes are not multiples of 4" % (ow, oh, w, h))
+<<<<<<< HEAD
         __print_size_warning.has_printed = True
+=======
+        __print_size_warning.has_printed = True
+>>>>>>> 34776ca (update code)

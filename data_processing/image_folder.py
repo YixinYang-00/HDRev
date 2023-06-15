@@ -73,4 +73,8 @@ class ImageFolder(data.Dataset):
             return img
 
     def __len__(self):
+<<<<<<< HEAD
         return len(self.imgs)
+=======
+        return len(self.imgs)
+>>>>>>> 34776ca (update code)

@@ -11,6 +11,7 @@ from .Unet import *
 # Helper Functions
 ###############################################################################
 
+<<<<<<< HEAD
 def get_scheduler(optimizer, opt):
     """Return a learning rate scheduler
 
@@ -75,10 +76,14 @@ def init_weights(net, init_type='normal', init_gain=0.02, pretrain=False):
     net.apply(init_func)  # apply the initialization function <init_func>
 
 def define_Encoder(Etype, in_channels, net_path = None, train=True, init_type='normal', init_gain=0.02, gpu_ids=[]) :
+=======
+def define_Encoder(Etype, in_channels, net_path = None, gpu_ids=[]) :
+>>>>>>> 34776ca (update code)
     if Etype == 'Unet4R':
         net = UEncoder4Recurrent(in_channels)
     elif Etype == 'Unet3R':
         net = UEncoder3Recurrent(in_channels)
+<<<<<<< HEAD
     if net_path is not None:
         print('load ' + net_path)
         net.load_state_dict(torch.load(net_path))
@@ -93,11 +98,22 @@ def define_Encoder(Etype, in_channels, net_path = None, train=True, init_type='n
     return net
 
 def define_Decoder(Dtype, out_channels, net_path = None, train=True, init_type='normal', init_gain=0.02, gpu_ids=[]) :
+=======
+    print('load ' + net_path)
+    net.load_state_dict(torch.load(net_path))
+    if len(gpu_ids) > 0:
+        net.to(gpu_ids[0])
+        net = torch.nn.DataParallel(net, gpu_ids)
+    return net
+
+def define_Decoder(Dtype, out_channels, net_path = None, gpu_ids=[]) :
+>>>>>>> 34776ca (update code)
     if Dtype == 'Unet3R':
         net = UDecoder(out_channels)
     elif Dtype == 'Unet4R':
         net = UDecoder4(out_channels)
     
+<<<<<<< HEAD
     if net_path is not None:
         print('load ' + net_path)
         net.load_state_dict(torch.load(net_path))
@@ -119,13 +135,30 @@ def define_Fusion(n_features, net_path = None, train=True, init_type='normal', i
         net.load_state_dict(torch.load(net_path))
     else:
         init_weights(net, init_type, init_gain)
+=======
+    print('load ' + net_path)
+    net.load_state_dict(torch.load(net_path))
+    if len(gpu_ids) > 0:
+        net.to(gpu_ids[0])
+        net = torch.nn.DataParallel(net, gpu_ids)
+    return net
+
+def define_Fusion(n_features, net_path = None, gpu_ids=[]):
+    net = FusionLayer_Unet(n_features)
+    
+    print('load ' + net_path)
+    net.load_state_dict(torch.load(net_path))
+>>>>>>> 34776ca (update code)
     if len(gpu_ids) > 0:
         net.to(gpu_ids[0])
         net = torch.nn.DataParallel(net, gpu_ids)
     
+<<<<<<< HEAD
     if not train:
         for p in net.parameters():
             p.requires_grad = False
+=======
+>>>>>>> 34776ca (update code)
     return net
 
 ##############################################################################

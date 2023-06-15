@@ -90,4 +90,8 @@ class CustomDatasetDataLoader():
         for i, data in enumerate(self.dataloader):
             if i * self.opt.batch_size >= self.opt.max_dataset_size:
                 break
+<<<<<<< HEAD
             yield data
+=======
+            yield data
+>>>>>>> 34776ca (update code)
