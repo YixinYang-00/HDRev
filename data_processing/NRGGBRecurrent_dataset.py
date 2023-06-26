@@ -312,7 +312,7 @@ class NRGGBRecurrentDataset(BaseDataset):
         with torch.no_grad():
 
             events_torch = torch.from_numpy(events)
-            events_torch = events_torch
+            events_torch = events_torch.float()
 
             voxel_grid = torch.zeros(num_bins, height, width, dtype=torch.float32).flatten()
             if events.shape[0] == 0:
@@ -363,8 +363,12 @@ class NRGGBRecurrentDataset(BaseDataset):
             voxel_grid = voxel_grid.view(num_bins, height, width)
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         return voxel_grid    
     
 =======
         return voxel_grid    
 >>>>>>> 34776ca (update code)
+=======
+        return voxel_grid    
+>>>>>>> a86b17f (Update dataset code)
