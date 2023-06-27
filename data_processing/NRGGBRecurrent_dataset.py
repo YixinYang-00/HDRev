@@ -129,7 +129,7 @@ class NRGGBRecurrentDataset(BaseDataset):
         with torch.no_grad():
 
             events_torch = torch.from_numpy(events)
-            events_torch = events_torch
+            events_torch = events_torch.float()
 
             voxel_grid = torch.zeros(num_bins, height, width, dtype=torch.float32).flatten()
             if events.shape[0] == 0:
