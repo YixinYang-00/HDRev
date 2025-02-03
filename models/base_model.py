@@ -33,12 +33,8 @@ class BaseModel(ABC):
         self.gpu_ids = opt.gpu_ids
         self.isTrain = opt.isTrain
         self.device = torch.device('cuda:{}'.format(self.gpu_ids[0])) if self.gpu_ids else torch.device('cpu')  # get device name: CPU or GPU
-<<<<<<< HEAD
         self.save_dir = os.path.join(opt.checkpoints_dir, opt.name)  # save all the checkpoints to save_dir
-        # if opt.preprocess != 'scale_width':  # with [scale_width], input images might have different sizes, which hurts the performance of cudnn.benchmark.
-        #     torch.backends.cudnn.benchmark = True
-=======
->>>>>>> 34776ca (update code)
+
         self.loss_names = []
         self.metric_names = []
         self.model_names = []
@@ -74,7 +70,6 @@ class BaseModel(ABC):
         """Run forward pass; called by both functions <optimize_parameters> and <test>."""
         pass
 
-<<<<<<< HEAD
     @abstractmethod
     def optimize_parameters(self):
         """Calculate losses, gradients, and update network weights; called in every training iteration"""
@@ -95,8 +90,6 @@ class BaseModel(ABC):
             # self.load_networks_init_colornet(load_suffix)
         self.print_networks(opt.verbose)
 
-=======
->>>>>>> 34776ca (update code)
     def eval(self):
         """Make models eval mode during test time"""
         for name in self.model_names:
@@ -122,7 +115,6 @@ class BaseModel(ABC):
         """ Return image paths that are used to load current data"""
         return self.image_paths
 
-<<<<<<< HEAD
     def update_learning_rate(self):
         """Update learning rates for all the networks; called at the end of every epoch"""
         for scheduler in self.schedulers:
@@ -134,8 +126,6 @@ class BaseModel(ABC):
         lr = self.optimizers[0].param_groups[0]['lr']
         print('learning rate = %.7f' % lr)
 
-=======
->>>>>>> 34776ca (update code)
     def get_current_visuals(self):
         """Return visualization images. train.py will display these images with visdom, and save the images to a HTML"""
         visual_ret = OrderedDict()
@@ -144,7 +134,6 @@ class BaseModel(ABC):
                 visual_ret[name] = getattr(self, name)
         return visual_ret
 
-<<<<<<< HEAD
     def get_current_losses(self):
         """Return traning losses / errors. train.py will print out these errors on console, and save them to a file"""
         errors_ret = OrderedDict()
@@ -253,8 +242,6 @@ class BaseModel(ABC):
 
                 net.load_state_dict(state_dict)
 
-=======
->>>>>>> 34776ca (update code)
     def print_networks(self, verbose):
         """Print the total number of parameters in the network and (if verbose) network architecture
 
@@ -272,7 +259,6 @@ class BaseModel(ABC):
                     print(net)
                 print('[Network %s] Total number of parameters : %.3f M' % (name, num_params / 1e6))
         print('-----------------------------------------------')
-<<<<<<< HEAD
 
     def set_requires_grad(self, nets, requires_grad=False):
         """Set requies_grad=Fasle for all the networks to avoid unnecessary computations
@@ -286,5 +272,3 @@ class BaseModel(ABC):
             if net is not None:
                 for param in net.parameters():
                     param.requires_grad = requires_grad
-=======
->>>>>>> 34776ca (update code)

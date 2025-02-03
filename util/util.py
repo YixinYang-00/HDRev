@@ -17,10 +17,6 @@ def normalize_batch(batch):
 def make_event_preview(events, color=False):
     event_preview = events[0, :, :, :].detach().cpu().numpy()
     event_preview = np.transpose(event_preview, (1, 2, 0))
-<<<<<<< HEAD
-    # event_preview = np.sum(event_preview, axis=0)
-=======
->>>>>>> 34776ca (update code)
 
     # normalize event image to [0, 255] for display
     m, M = -10.0, 10.0
@@ -60,27 +56,6 @@ def tensor2im(input_image, imtype=np.uint8):
         image_numpy = input_image[0]
     return image_numpy.astype(imtype)
 
-
-<<<<<<< HEAD
-def diagnose_network(net, name='network'):
-    """Calculate and print the mean of average absolute(gradients)
-
-    Parameters:
-        net (torch network) -- Torch network
-        name (str) -- the name of the network
-    """
-    mean = 0.0
-    count = 0
-    for param in net.parameters():
-        if param.grad is not None:
-            mean += torch.mean(torch.abs(param.grad.data))
-            count += 1
-    if count > 0:
-        mean = mean / count
-    print(name)
-    print(mean)
-
-
 def save_image(image_numpy, image_path):
     """Save a numpy image to the disk
 
@@ -108,8 +83,6 @@ def print_numpy(x, val=True, shp=False):
             np.mean(x), np.min(x), np.max(x), np.median(x), np.std(x)))
 
 
-=======
->>>>>>> 34776ca (update code)
 def mkdirs(paths):
     """create empty directories if they don't exist
 
@@ -141,17 +114,7 @@ def add_PG_noise(img, sigma_s='RAN', sigma_c='RAN'):
         sigma_c = min_log + np.random.rand(1) * (np.log([0.0005]) - min_log)
         sigma_c = np.exp(sigma_c)
     # add noise
-<<<<<<< HEAD
-    # print('Adding Noise: sigma_s='+str(sigma_s*255)+' sigma_c='+str(sigma_c*255))
     sigma_total = np.sqrt(sigma_s * img + sigma_c)
-    '''
-    noisy_img = img + \
-    np.random.normal(0.0, 1.0, img.shape) * (sigma_s * img) + \
-    np.random.normal(0.0, 1.0, img.shape) * sigma_c
-    '''
-=======
-    sigma_total = np.sqrt(sigma_s * img + sigma_c)
->>>>>>> 34776ca (update code)
     noisy_img = img +  \
         sigma_total * np.random.randn(img.shape[-2], img.shape[-1])
     noisy_img = np.clip(noisy_img, 0, 1)

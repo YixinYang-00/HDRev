@@ -4,7 +4,6 @@ import math
 import torchvision.transforms as transforms
 import scipy.stats as st
 import numpy as np
-<<<<<<< HEAD
 from .base_model import BaseModel
 from networks import networks
 from .vgg import Vgg16
@@ -28,13 +27,6 @@ def Gram_matrix(input):
     G = torch.mm(features, features.t())
 
     return G.div(a*b*c*d)
-=======
-import cv2
-from .base_model import BaseModel
-from networks import networks
-from util.colorConvert import BGR2YCbCr, BGR2XYZ, XYZ2BGR
-from util.util import tensor2im, make_event_preview
->>>>>>> 34776ca (update code)
 
 def gauss_kernel(kernlen=21, nsig=3, channels=1):
     interval = (2*nsig+1.)/(kernlen)
@@ -50,7 +42,6 @@ def gauss_kernel(kernlen=21, nsig=3, channels=1):
 class SEL2HDRUnetRecurrentModel(BaseModel):
     def __init__(self, opt):
         BaseModel.__init__(self, opt)
-<<<<<<< HEAD
         # specify the training losses you want to print out. The training/test scripts will call <BaseModel.get_current_losses>
         self.loss_names = []
         if 'l2' in self.opt.loss_type:
@@ -68,21 +59,12 @@ class SEL2HDRUnetRecurrentModel(BaseModel):
         self.metric_names = ['psnr', 'ssim']
         self.model_names = ['Encoder_E', 'Encoder_I', 'Merge', 'Decoder']
         
-=======
-        # specify the images you want to save/display. The training/test scripts will call <BaseModel.get_current_visuals>
-        self.visual_names = ['ldr', 'images', 'tm_images']
-        self.model_names = ['Encoder_E', 'Encoder_I', 'Merge', 'Decoder']
-        
-        self.num_bins = opt.num_bins
-        
->>>>>>> 34776ca (update code)
         self.statei = None
         self.statee = None
 
         weights = opt.load_weights
         assert weights in ['Unet3R', 'Unet4R']
 
-<<<<<<< HEAD
         self.netEncoder_I = networks.define_Encoder(Etype=weights, in_channels = 3, train = True,
                                                     net_path = os.path.join('weights', weights, 'Encoder_I.pth'), gpu_ids=self.gpu_ids)
         self.netEncoder_E = networks.define_Encoder(Etype=weights, in_channels = opt.num_bins, train = True,
@@ -113,36 +95,6 @@ class SEL2HDRUnetRecurrentModel(BaseModel):
         u = 5000
         return torch.log(1 + u * img) / math.log(1 + u)
 
-=======
-        self.netEncoder_I = networks.define_Encoder(Etype=weights, in_channels = 3,
-                                                    net_path = os.path.join('weights', weights, 'Encoder_I.pth'), gpu_ids=self.gpu_ids)
-        self.netEncoder_E = networks.define_Encoder(Etype=weights, in_channels = opt.num_bins, 
-                                                    net_path = os.path.join('weights', weights, 'Encoder_E.pth'), gpu_ids=self.gpu_ids)
-        self.netMerge = networks.define_Fusion(n_features = int(weights[-2]),
-                                                    net_path = os.path.join('weights', weights, 'Merge.pth'), gpu_ids=self.gpu_ids)
-        self.netDecoder  = networks.define_Decoder(Dtype=weights, out_channels = 3,
-                                                    net_path = os.path.join('weights', weights, 'Decoder.pth'), gpu_ids=self.gpu_ids)
-        
-        self.transform = transforms.ToTensor()
-        
-    def set_input(self, input):
-        """Unpack input data from the dataloader and perform necessary pre-processing steps.
-
-        Parameters:
-            input (dict): include the data itself and its metadata information.
-
-        The option 'direction' can be used to swap images in domain A and domain B.
-        """
-        self.evs = input['ev']
-        self.ldr = input['ldr']
-        self.t = input['t']
-        self.gt = input['hdr']
-
-    def blur(self, x, kernel = 21, channels = 3, stride = 1, padding = 'same'):
-        kernel_var = torch.from_numpy(gauss_kernel(kernel, 3, channels)).to(self.device).float()
-        return torch.nn.functional.conv2d(x, kernel_var, stride = stride, padding = padding, groups = channels)
-    
->>>>>>> 34776ca (update code)
     def forward_each(self, evs, ldr, t):
         """Run forward pass; called by both functions <optimize_parameters> and <test>."""
         Y_ldr = BGR2YCbCr(ldr)[:, 0:1, :, :]
@@ -172,7 +124,6 @@ class SEL2HDRUnetRecurrentModel(BaseModel):
         img = self.netDecoder(feat)
         return img
 
-<<<<<<< HEAD
     def set_input(self, input):
         """Unpack input data from the dataloader and perform necessary pre-processing steps.
 
@@ -225,13 +176,6 @@ class SEL2HDRUnetRecurrentModel(BaseModel):
         self.statei, self.statee = None, None
         for i in range(len(self.evs)):
             self.statei, self.statee = None, None
-=======
-    def forward(self):
-        self.images = []
-        self.statei, self.statee, self.pevs = None, None, 0
-        for i in range(len(self.evs)):
-            self.statei, self.statee, self.pevs = None, None, 0
->>>>>>> 34776ca (update code)
             for j in range(max(0, i - self.opt.num_img + 1), i):
                 img = self.forward_each(self.evs[j].to(self.device).float(), self.ldr[j].to(self.device).float(), self.t[j].to(self.device).float())
                 self.images[j] += img
@@ -240,7 +184,6 @@ class SEL2HDRUnetRecurrentModel(BaseModel):
         for i in range(len(self.images)):
             self.images[i] /= min(self.opt.num_img, len(self.images) - i)
 
-<<<<<<< HEAD
     def optimize_parameters(self):
         self.statei, self.statee = None, None
         imgs, gts = [], []
@@ -263,10 +206,6 @@ class SEL2HDRUnetRecurrentModel(BaseModel):
     def tonemap(self, img, log_sum_prev=None):
         key_fac, epsilon, tm_gamma = 0.5, 1e-6, 1.4
         # print(img.shape)
-=======
-    def tonemap(self, img, log_sum_prev=None):
-        key_fac, epsilon, tm_gamma = 0.5, 1e-6, 1.4
->>>>>>> 34776ca (update code)
         XYZ = BGR2XYZ(img)
         b, c, h, w = XYZ.shape
         if log_sum_prev is None:
@@ -294,7 +233,6 @@ class SEL2HDRUnetRecurrentModel(BaseModel):
         t_gt = None
         self.tm_images, self.tm_gt = self.images, self.gt
         for i in range(len(self.images)):
-<<<<<<< HEAD
             self.tm_images[i], t_im = self.tonemap(self.images[i], t_im)
             self.images[i] = torch.clamp(self.images[i], 0, 1)   
             self.tm_gt[i], t_gt = self.tonemap(self.gt[i], t_gt)
@@ -307,10 +245,4 @@ class SEL2HDRUnetRecurrentModel(BaseModel):
         self.metric_ssim = compare_ssim(gt_np, hdr_np, gaussian_weights=True, channel_axis=2)
         
     
-=======
-            self.images[i] = torch.clamp(self.images[i], 0, 1)   
-            self.tm_images[i], t_im = self.tonemap(self.images[i], t_im)
-            self.tm_gt[i], t_gt = self.tonemap(self.gt[i], t_gt)
-            self.gt[i] = torch.clamp(self.gt[i], 0, 1)    
->>>>>>> 34776ca (update code)
         

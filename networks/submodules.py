@@ -300,8 +300,4 @@ class ConvGRU(nn.Module):
         out_inputs = torch.tanh(self.out_gate(torch.cat([input_, prev_state * reset], dim=1)))
         new_state = prev_state * (1 - update) + out_inputs * update
 
-<<<<<<< HEAD
         return new_state
-=======
-        return new_state
->>>>>>> 34776ca (update code)
