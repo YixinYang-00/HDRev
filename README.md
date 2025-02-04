@@ -34,5 +34,26 @@ one of the dataset example are shown in datasets/real.
 python test.py --dataroot datasets/real/ --test_on_txt
 ```
 
+## Training
+Please ensure the pretraining path is correctly set in the model files before starting training.
+
+### event-to-image pretraining
+
+```shell
+python train.py --model E2IRecurrent --dataroot PATH_TO_DATA
+```
+
+### LDR-to-image pretraining
+
+```shell
+python train.py --model L2LRecurrent --dataroot PATH_TO_DATA
+```
+
+### event+LDR-to-HDR training
+
+```shell
+python train.py --model SEL2HDR_UnetRecurrent --dataroot PATH_TO_DATA
+```
+
 ## Contact
 if you have any question, please send an email to yangyixin93@pku.edu.cn
