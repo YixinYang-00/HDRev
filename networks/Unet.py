@@ -147,8 +147,4 @@ class UEncoder4Recurrent(nn.Module):
         e4, state4 = self.Maxpool3(e3, prev_states[2])
         e4 = self.Conv4(e4)
 
-<<<<<<< HEAD
         return [e1, e2, e3, e4], [state2, state3, state4]
-=======
-        return [e1, e2, e3, e4], [state2, state3, state4]
->>>>>>> 34776ca (update code)
