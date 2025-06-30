@@ -187,6 +187,7 @@ class SEL2HDRUnetRecurrentModel(BaseModel):
     def optimize_parameters(self):
         self.statei, self.statee = None, None
         imgs, gts = [], []
+        self.images = None
         for evs, ldr, gt, t in zip(self.evs, self.ldr, self.gt, self.t):
             self.images = self.forward_each(evs.to(self.device).float(), ldr.to(self.device).float(), t.to(self.device).float())
             imgs.append(self.images)
@@ -201,11 +202,9 @@ class SEL2HDRUnetRecurrentModel(BaseModel):
             optimizer.step()
         
         self.images = imgs
-        self.gt = self.gt
         
     def tonemap(self, img, log_sum_prev=None):
         key_fac, epsilon, tm_gamma = 0.5, 1e-6, 1.4
-        # print(img.shape)
         XYZ = BGR2XYZ(img)
         b, c, h, w = XYZ.shape
         if log_sum_prev is None:
@@ -231,18 +230,16 @@ class SEL2HDRUnetRecurrentModel(BaseModel):
     def compute_visuals(self):
         t_im = None
         t_gt = None
-        self.tm_images, self.tm_gt = self.images, self.gt
+        self.tm_images, self.tm_gt = self.images.copy(), self.gt.copy()
         for i in range(len(self.images)):
-            self.tm_images[i], t_im = self.tonemap(self.images[i], t_im)
-            self.images[i] = torch.clamp(self.images[i], 0, 1)   
-            self.tm_gt[i], t_gt = self.tonemap(self.gt[i], t_gt)
-            self.gt[i] = torch.clamp(self.gt[i], 0, 1)    
+            self.tm_images[i], t_im = self.tonemap(self.images[i].detach().cpu(), t_im)
+            self.images[i] = torch.clamp(self.images[i].detach().cpu(), 0, 1)   
+            self.tm_gt[i], t_gt = self.tonemap(self.gt[i].detach().cpu(), t_gt)
+            self.gt[i] = torch.clamp(self.gt[i].detach().cpu(), 0, 1)    
 
     def compute_metrics(self):
         hdr_np = tensor2im(self.images[-1])
         gt_np = tensor2im(self.gt[-1])
         self.metric_psnr = compare_psnr(gt_np, hdr_np)
         self.metric_ssim = compare_ssim(gt_np, hdr_np, gaussian_weights=True, channel_axis=2)
-        
-    
         
