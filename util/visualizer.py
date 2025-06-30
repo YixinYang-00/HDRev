@@ -99,19 +99,22 @@ class Visualizer():
             
         print(message)  # print the message
             
-    # Save training samples to disk
+     # Save training samples to disk
     def save_image_to_disk(self, visuals, iteration, epoch):
-        for label, image in visuals.items():
+        for label, images in visuals.items():
             if(label in ['ldr', 'gt', 'images']):
-                for i in range(0, image.shape[1], 3):
-                    image_numpy = util.tensor2im(image[:, i:i+3, :, :])
-                    img_path = os.path.join(self.img_dir, 'epoch%.3d_iter%.4d_%s_%d.jpg' % (epoch, iteration, label, i))
-                    cv2.imwrite(img_path, image_numpy) 
+                for j, image in enumerate(images):
+                    for i in range(0, image.shape[1], 3):
+                        image_numpy = util.tensor2im(image[:, i:i+3, :, :])
+                        img_path = os.path.join(self.img_dir, 'epoch%.3d_iter%.4d_%s_%d.jpg' % (epoch, iteration, label, j))
+                        cv2.imwrite(img_path, image_numpy[:, :, ::-1]) 
             if(label == 'evs') :
-                for i in range(0,image.shape[1],3):
-                    image_numpy = util.make_event_preview(image[:, i:i+3, :, :])
-                    img_path = os.path.join(self.img_dir, 'epoch%.3d_iter%.4d_%s_%d.jpg' % (epoch, iteration, label, i))
-                    cv2.imwrite(img_path, image_numpy)
+                for j, image in enumerate(images):
+                    for i in range(0,image.shape[1],3):
+                        image_numpy = util.make_event_preview(image[:, i:i+3, :, :])
+                        img_path = os.path.join(self.img_dir, 'epoch%.3d_iter%.4d_%s_%d.jpg' % (epoch, iteration, label, j))
+                        cv2.imwrite(img_path, image_numpy)
             else:
                 continue
+
 
